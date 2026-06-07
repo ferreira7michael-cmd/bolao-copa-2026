@@ -282,6 +282,95 @@ h2 {
   gap: 12px;
 }
 
+.match-browser {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 253, 248, 0.92);
+  padding: 12px;
+}
+
+.compact-browser {
+  box-shadow: none;
+  padding: 10px;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.segmented button,
+.round-scroll button {
+  border: 1px solid var(--line);
+  background: white;
+  color: var(--muted);
+}
+
+.segmented button.active,
+.round-scroll button.active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: white;
+}
+
+.round-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+}
+
+.round-scroll button {
+  min-width: max-content;
+  padding: 0 14px;
+}
+
+.round-summary {
+  display: grid;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+
+.round-summary > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.round-summary span {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.team-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.team-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  color: var(--ink);
+  padding: 7px 9px;
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.team-chip span {
+  color: inherit;
+}
+
 .match-list,
 .ranking-list,
 .participant-list {
@@ -462,6 +551,10 @@ h2 {
 
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .round-scroll {
+    margin: 0 -2px;
   }
 
   .score-form {

@@ -78,6 +78,8 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [tab, setTab] = useState<"palpites" | "ranking" | "admin">("palpites");
+  const [matchView, setMatchView] = useState<"groups" | "knockout">("groups");
+  const [selectedRound, setSelectedRound] = useState("Grupo A");
   const [matches, setMatches] = useState<MatchWithPrediction[]>([]);
   const [ranking, setRanking] = useState<RankingItem[]>([]);
   const [participants, setParticipants] = useState<Participant[]>([]);
@@ -91,6 +93,40 @@ export default function HomePage() {
     () => matches.filter((match) => match.status === "finished"),
     [matches]
   );
+
+  const groupRounds = useMemo(
+    () => Array.from(new Set(matches.filter((match) => match.round.startsWith("Grupo")).map((match) => match.round))),
+    [matches]
+  );
+
+  const knockoutRounds = useMemo(
+    () => Array.from(new Set(matches.filter((match) => !match.round.startsWith("Grupo")).map((match) => match.round))),
+    [matches]
+  );
+
+  const visibleRounds = matchView === "groups" ? groupRounds : knockoutRounds;
+
+  const selectedMatches = useMemo(() => {
+    if (!matches.length) return [];
+
+    return matches.filter((match) => match.round === selectedRound);
+  }, [matches, selectedRound]);
+
+  const selectedTeams = useMemo(() => {
+    const teams = new Set<string>();
+
+    for (const match of selectedMatches) {
+      if (!match.home_team.includes("Grupo") && !match.home_team.includes("Jogo")) {
+        teams.add(match.home_team);
+      }
+
+      if (!match.away_team.includes("Grupo") && !match.away_team.includes("Jogo")) {
+        teams.add(match.away_team);
+      }
+    }
+
+    return Array.from(teams).sort((a, b) => a.localeCompare(b));
+  }, [selectedMatches]);
 
   async function refresh() {
     const [matchesData, rankingData] = await Promise.all([
@@ -118,6 +154,14 @@ export default function HomePage() {
       refresh().catch((error: Error) => setMessage(error.message));
     }
   }, [user]);
+
+  useEffect(() => {
+    const rounds = matchView === "groups" ? groupRounds : knockoutRounds;
+
+    if (rounds.length && !rounds.includes(selectedRound)) {
+      setSelectedRound(rounds[0]);
+    }
+  }, [groupRounds, knockoutRounds, matchView, selectedRound]);
 
   async function login(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -257,6 +301,8 @@ export default function HomePage() {
 
       setMessage(`Tabela completa carregada com ${data.count} jogos.`);
       await refresh();
+      setMatchView("groups");
+      setSelectedRound("Grupo A");
       setTab("palpites");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Erro ao carregar tabela da Copa.");
@@ -342,8 +388,54 @@ export default function HomePage() {
               <span>resultados lancados</span>
             </div>
           </div>
+          <div className="match-browser">
+            <div className="segmented">
+              <button
+                className={matchView === "groups" ? "active" : ""}
+                type="button"
+                onClick={() => setMatchView("groups")}
+              >
+                Grupos
+              </button>
+              <button
+                className={matchView === "knockout" ? "active" : ""}
+                type="button"
+                onClick={() => setMatchView("knockout")}
+              >
+                Mata-mata
+              </button>
+            </div>
+            <div className="round-scroll" aria-label="Filtrar jogos">
+              {visibleRounds.map((round) => (
+                <button
+                  className={selectedRound === round ? "active" : ""}
+                  key={round}
+                  type="button"
+                  onClick={() => setSelectedRound(round)}
+                >
+                  {round}
+                </button>
+              ))}
+            </div>
+            <div className="round-summary">
+              <div>
+                <strong>{selectedRound}</strong>
+                <span>{selectedMatches.length} jogos</span>
+              </div>
+              {selectedTeams.length ? (
+                <div className="team-chip-list">
+                  {selectedTeams.map((team) => (
+                    <span className="team-chip" key={team}>
+                      <span>{getTeamFlag(team)}</span>
+                      {team}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          </div>
           <div className="match-list">
-            {matches.map((match) => (
+            {selectedMatches.map((match) => (
               <article className="match-card" key={match.id}>
                 <div className="match-meta">
                   <span>{match.round}</span>
@@ -478,8 +570,38 @@ export default function HomePage() {
 
           <section className="panel">
             <h2>Resultados</h2>
+            <div className="match-browser compact-browser">
+              <div className="segmented">
+                <button
+                  className={matchView === "groups" ? "active" : ""}
+                  type="button"
+                  onClick={() => setMatchView("groups")}
+                >
+                  Grupos
+                </button>
+                <button
+                  className={matchView === "knockout" ? "active" : ""}
+                  type="button"
+                  onClick={() => setMatchView("knockout")}
+                >
+                  Mata-mata
+                </button>
+              </div>
+              <div className="round-scroll" aria-label="Filtrar resultados">
+                {visibleRounds.map((round) => (
+                  <button
+                    className={selectedRound === round ? "active" : ""}
+                    key={round}
+                    type="button"
+                    onClick={() => setSelectedRound(round)}
+                  >
+                    {round}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="match-list compact">
-              {matches.map((match) => (
+              {selectedMatches.map((match) => (
                 <article className="match-card" key={match.id}>
                   <div className="match-meta">
                     <span>{match.round}</span>
