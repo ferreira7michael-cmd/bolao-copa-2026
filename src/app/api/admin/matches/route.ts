@@ -48,7 +48,13 @@ export async function PATCH(request: Request) {
       awayScore?: number;
     };
 
-    if (!matchId || !Number.isInteger(homeScore) || !Number.isInteger(awayScore)) {
+    if (
+      !matchId ||
+      typeof homeScore !== "number" ||
+      typeof awayScore !== "number" ||
+      !Number.isInteger(homeScore) ||
+      !Number.isInteger(awayScore)
+    ) {
       throw new Error("Informe o jogo e o placar final.");
     }
 
