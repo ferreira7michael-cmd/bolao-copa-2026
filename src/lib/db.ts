@@ -8,6 +8,7 @@ export type Database = {
         Row: ParticipantRow;
         Insert: Omit<ParticipantRow, "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<ParticipantRow>;
+        Relationships: [];
       };
       matches: {
         Row: MatchRow;
@@ -23,6 +24,7 @@ export type Database = {
           status?: MatchRow["status"];
         };
         Update: Partial<MatchRow>;
+        Relationships: [];
       };
       predictions: {
         Row: PredictionRow;
@@ -33,6 +35,22 @@ export type Database = {
           updated_at?: string;
         };
         Update: Partial<PredictionRow>;
+        Relationships: [
+          {
+            foreignKeyName: "predictions_match_id_fkey";
+            columns: ["match_id"];
+            isOneToOne: false;
+            referencedRelation: "matches";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "predictions_participant_id_fkey";
+            columns: ["participant_id"];
+            isOneToOne: false;
+            referencedRelation: "participants";
+            referencedColumns: ["id"];
+          }
+        ];
       };
     };
   };
