@@ -8,6 +8,7 @@
   --primary: #0f6b56;
   --primary-dark: #0a4f40;
   --accent: #cf2f2f;
+  --blue: #1859a8;
   --gold: #d6a83e;
   --shadow: 0 18px 50px rgba(24, 36, 31, 0.12);
 }
@@ -114,7 +115,8 @@ h2 {
 .match-card,
 .ranking-row,
 .rules,
-.summary-band {
+.summary-band,
+.hero-band {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(255, 253, 248, 0.92);
@@ -232,6 +234,54 @@ h2 {
   font-weight: 800;
 }
 
+.summary-band.accent strong {
+  background: #f8e7e4;
+  color: #8c1717;
+}
+
+.hero-band {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 18px;
+  align-items: center;
+  padding: 20px;
+  background:
+    linear-gradient(135deg, rgba(15, 107, 86, 0.96), rgba(24, 89, 168, 0.9)),
+    var(--primary);
+  color: white;
+  overflow: hidden;
+}
+
+.hero-band .eyebrow,
+.hero-band p {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.hero-band h2 {
+  margin: 2px 0 6px;
+  font-size: clamp(1.35rem, 2.6vw, 2.2rem);
+}
+
+.hero-badges {
+  display: grid;
+  gap: 8px;
+  min-width: 130px;
+}
+
+.hero-badges span {
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.13);
+  padding: 8px 10px;
+  font-weight: 900;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
 .match-list,
 .ranking-list,
 .participant-list {
@@ -274,6 +324,9 @@ h2 {
 }
 
 .teams strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   flex: 1;
   min-width: 0;
   overflow-wrap: anywhere;
@@ -281,7 +334,21 @@ h2 {
 }
 
 .teams strong:last-child {
+  justify-content: flex-end;
   text-align: right;
+}
+
+.flag {
+  display: inline-grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  font-size: 1.22rem;
+  line-height: 1;
 }
 
 .teams span,
@@ -358,6 +425,13 @@ h2 {
   color: var(--muted);
 }
 
+.schedule-panel {
+  border-color: rgba(15, 107, 86, 0.3);
+  background:
+    linear-gradient(135deg, rgba(15, 107, 86, 0.09), rgba(214, 168, 62, 0.08)),
+    var(--surface);
+}
+
 @media (max-width: 760px) {
   .screen,
   .login-screen,
@@ -370,6 +444,23 @@ h2 {
   }
 
   .admin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-band {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-badges {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .hero-badges span {
+    text-align: center;
+    padding: 8px 6px;
+  }
+
+  .stats-grid {
     grid-template-columns: 1fr;
   }
 

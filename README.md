@@ -50,4 +50,4 @@ Depois do deploy, entre com o usuario admin configurado e crie os participantes.
 
 ## Observacao sobre a tabela da Copa
 
-O schema ja suporta todos os 104 jogos. A carga inicial tem jogos de exemplo para validar o fluxo. Antes de abrir o bolao para os amigos, atualize/cadastre a tabela oficial completa no painel admin.
+O schema ja suporta todos os 104 jogos. Depois de entrar como admin, use o botao **Carregar Copa 2026 completa** na aba Admin para substituir a carga inicial pela tabela completa do Mundial.

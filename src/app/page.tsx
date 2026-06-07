@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { scoringRules } from "@/lib/scoring";
 import type { SessionUser } from "@/lib/types";
+import { getTeamFlag } from "@/lib/worldCup2026";
 
 type MatchWithPrediction = {
   id: string;
@@ -83,6 +84,11 @@ export default function HomePage() {
 
   const pendingMatches = useMemo(
     () => matches.filter((match) => match.status === "scheduled"),
+    [matches]
+  );
+
+  const finishedMatches = useMemo(
+    () => matches.filter((match) => match.status === "finished"),
     [matches]
   );
 
@@ -234,6 +240,29 @@ export default function HomePage() {
     }
   }
 
+  async function seedWorldCupSchedule() {
+    const confirmed = window.confirm(
+      "Isso vai substituir a tabela atual pelos 104 jogos da Copa 2026 e apagar palpites existentes. Continuar?"
+    );
+
+    if (!confirmed) return;
+
+    setMessage("");
+
+    try {
+      const data = await api<{ count: number }>("/api/admin/seed-world-cup", {
+        method: "POST",
+        body: JSON.stringify({})
+      });
+
+      setMessage(`Tabela completa carregada com ${data.count} jogos.`);
+      await refresh();
+      setTab("palpites");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Erro ao carregar tabela da Copa.");
+    }
+  }
+
   if (loading) {
     return <main className="screen center">Carregando...</main>;
   }
@@ -291,9 +320,27 @@ export default function HomePage() {
 
       {tab === "palpites" ? (
         <section className="content-grid">
-          <div className="summary-band">
-            <strong>{pendingMatches.length}</strong>
-            <span>jogos abertos para palpite</span>
+          <div className="hero-band">
+            <div>
+              <p className="eyebrow">Rumo ao Mundial</p>
+              <h2>Copa 2026 completa</h2>
+              <p>{matches.length} jogos cadastrados, da fase de grupos ate a final.</p>
+            </div>
+            <div className="hero-badges">
+              <span>🇲🇽 Mexico</span>
+              <span>🇺🇸 EUA</span>
+              <span>🇨🇦 Canada</span>
+            </div>
+          </div>
+          <div className="stats-grid">
+            <div className="summary-band">
+              <strong>{pendingMatches.length}</strong>
+              <span>abertos para palpite</span>
+            </div>
+            <div className="summary-band accent">
+              <strong>{finishedMatches.length}</strong>
+              <span>resultados lancados</span>
+            </div>
           </div>
           <div className="match-list">
             {matches.map((match) => (
@@ -303,9 +350,15 @@ export default function HomePage() {
                   <span>{formatDate(match.kickoff_at)}</span>
                 </div>
                 <div className="teams">
-                  <strong>{match.home_team}</strong>
+                  <strong>
+                    <span className="flag">{getTeamFlag(match.home_team)}</span>
+                    {match.home_team}
+                  </strong>
                   <span>x</span>
-                  <strong>{match.away_team}</strong>
+                  <strong>
+                    {match.away_team}
+                    <span className="flag">{getTeamFlag(match.away_team)}</span>
+                  </strong>
                 </div>
                 {match.stadium ? <p className="muted">{match.stadium}</p> : null}
                 {match.status === "finished" ? (
@@ -370,6 +423,17 @@ export default function HomePage() {
 
       {tab === "admin" && user.isAdmin ? (
         <section className="admin-grid">
+          <section className="panel schedule-panel">
+            <h2>Tabela oficial</h2>
+            <p className="muted">
+              Carrega os 104 jogos da Copa 2026, incluindo fase de grupos, 16 avos, oitavas,
+              quartas, semifinais, terceiro lugar e final.
+            </p>
+            <button type="button" onClick={seedWorldCupSchedule}>
+              Carregar Copa 2026 completa
+            </button>
+          </section>
+
           <form className="panel stack" onSubmit={createParticipant}>
             <h2>Novo participante</h2>
             <label>
@@ -422,9 +486,15 @@ export default function HomePage() {
                     <span>{formatDate(match.kickoff_at)}</span>
                   </div>
                   <div className="teams">
-                    <strong>{match.home_team}</strong>
+                    <strong>
+                      <span className="flag">{getTeamFlag(match.home_team)}</span>
+                      {match.home_team}
+                    </strong>
                     <span>x</span>
-                    <strong>{match.away_team}</strong>
+                    <strong>
+                      {match.away_team}
+                      <span className="flag">{getTeamFlag(match.away_team)}</span>
+                    </strong>
                   </div>
                   <form className="score-form" onSubmit={(event) => finishMatch(event, match.id)}>
                     <input name="homeScore" type="number" min="0" max="20" defaultValue={match.home_score ?? ""} required />

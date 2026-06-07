@@ -71,7 +71,8 @@ Depois clique em Deploy.
    - senha: valor de `ADMIN_PASSWORD`
 3. Abra a aba Admin.
 4. Crie os participantes com usuario e senha.
-5. Cadastre ou ajuste os jogos.
+5. Clique em **Carregar Copa 2026 completa** para inserir os 104 jogos.
+6. Cadastre ajustes manuais se algum horario ou confronto do mata-mata for atualizado pela organizacao.
 
 ## 5. Atualizacoes futuras
 
