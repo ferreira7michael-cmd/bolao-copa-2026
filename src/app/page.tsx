@@ -37,12 +37,19 @@ type Participant = {
   is_active: boolean;
 };
 
+function normalizeHeaders(headers?: HeadersInit): Record<string, string> {
+  if (!headers) return {};
+  if (headers instanceof Headers) return Object.fromEntries(headers.entries());
+  if (Array.isArray(headers)) return Object.fromEntries(headers);
+  return headers;
+}
+
 const api = async <T,>(url: string, options?: RequestInit): Promise<T> => {
   const response = await fetch(url, {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      ...(options?.headers ?? {})
+      ...normalizeHeaders(options?.headers)
     }
   });
 
