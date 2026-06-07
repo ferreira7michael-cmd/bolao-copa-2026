@@ -64,7 +64,7 @@ export function getSupabaseAdmin() {
     throw new Error("Configure SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.");
   }
 
-  return createClient<Database>(url, key, {
+  return createClient(url, key, {
     auth: {
       persistSession: false,
       autoRefreshToken: false
